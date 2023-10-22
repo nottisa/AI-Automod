@@ -9,12 +9,11 @@ try {
     fs.mkdirSync('./data');
   } else {
     let dataFolder = fs.readdirSync('./data');
-    for (i = 0; i < dataFolder.length; i++) {
-        let data2 = require('./data/' + dataFolder[i]);
-        for (i2 = 0; i2 < data2.length; i2++) {
-            data.push({input:data2[i2]["word"], output:data2[i2]["var"]})
-        }
-        console.log(data);
+    for (fileName of dataFolder) {
+      let file = require('./data/' + fileName);
+      for (element of file) {
+        data.push({input:element["word"], output:element["var"]})
+      }
     }
   }
 } catch (err) {
