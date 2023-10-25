@@ -22,6 +22,7 @@ exports.saveTrainingData = function (data) {
             }
             fs.writeFileSync("./formattedData/"+dataCount+".json", JSON.stringify(toExport))
         }
+        return true
     } catch (error) {
         console.log(error)
     }    
@@ -52,4 +53,20 @@ exports.loadModel = function (version) {
     let brain = require('brain.js');
     brain = new brain.NeuralNetwork()
     return brain.fromJSON(require(`../network/${version}.json`))
+}
+
+exports.formatData = function () {
+    if (!fs.existsSync('./rawData') || fs.readdirSync('./rawData').length == 0) {
+        console.log("Please collect data before processing.")
+        process.exit(1)
+    }
+
+    let dataFolder = fs.readdirSync('./rawData');
+    for(fileName of dataFolder) {
+        let file = require('../rawData/' + fileName);
+        let saved = this.saveTrainingData(file)
+        if(saved) {
+            fs.rmSync('./rawData/' + fileName)
+        }
+    }
 }
