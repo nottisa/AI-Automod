@@ -3,7 +3,7 @@ var strManipulation = require('./stringManipulation');
 
 
 
-exports.save = function (data) {
+exports.saveTrainingData = function (data) {
     let toExport = []
     for (const word of data) {
         toExport.push({"word": strManipulation.translate(word.word), "var": word.var})
