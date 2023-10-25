@@ -1,8 +1,6 @@
 const fs = require('fs');
 var strManipulation = require('./stringManipulation');
 
-
-
 exports.saveTrainingData = function (data) {
     let toExport = []
     for (const word of data) {
