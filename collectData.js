@@ -1,4 +1,4 @@
-var dataSave = require('./modules/dataSave');
+var dataSave = require('./modules/data');
 
 //To insert data simply follow the json object bellow
 
