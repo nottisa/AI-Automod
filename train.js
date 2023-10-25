@@ -6,12 +6,12 @@ const fs = require('fs');
 const data = []
 
 try {
-  if (!fs.existsSync('./data')) {
-    fs.mkdirSync('./data');
+  if (!fs.existsSync('./formattedData')) {
+    fs.mkdirSync('./formattedData');
   } else {
-    let dataFolder = fs.readdirSync('./data');
+    let dataFolder = fs.readdirSync('./formattedData');
     for (fileName of dataFolder) {
-      let file = require('./data/' + fileName);
+      let file = require('./formattedData/' + fileName);
       for (element of file) {
         data.push({input:element["word"], output:element["var"]})
       }

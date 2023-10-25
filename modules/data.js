@@ -9,18 +9,18 @@ exports.saveTrainingData = function (data) {
         toExport.push({"word": strManipulation.translate(word.word), "var": word.var})
     }
     try {
-        if (!fs.existsSync('./data')) {
-            fs.mkdirSync('./data');
+        if (!fs.existsSync('./formattedData')) {
+            fs.mkdirSync('./formattedData');
         } else {
             let dataCount = 1
             while (true) {
-                if (!fs.existsSync(`./data/${dataCount}.json`)) {
+                if (!fs.existsSync(`./formattedData/${dataCount}.json`)) {
                     break
                 } else {
                     dataCount++
                 }
             }
-            fs.writeFileSync("./data/"+dataCount+".json", JSON.stringify(toExport))
+            fs.writeFileSync("./formattedData/"+dataCount+".json", JSON.stringify(toExport))
         }
     } catch (error) {
         console.log(error)
