@@ -1,4 +1,5 @@
 dataSave = require('./modules/data');
-let brain = require('brain.js');
+var strManipulation = require('./modules/stringManipulation');
 const network = dataSave.loadModel(3)
-console.log(network.run("hi"))
+
+console.log(network.run(strManipulation.translate("hi")))
