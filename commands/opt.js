@@ -4,6 +4,7 @@ async function func(msg, args, client, sender, commandenabledforrole) {
   require('dotenv').config()
   try {
     const mongoClient = await mongo.openConnection(process.env.MONGO_URI);
+    let toOpt;
     if (args[0] == "in") {
       toOpt = true
     } else if (args[0] == "out") {
