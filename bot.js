@@ -10,9 +10,10 @@ const client = new Client({ token: process.env.TOKEN });
 let tempData = []
 let mode = "collect" //Changes mode to collect or ask people questions on data
 const commands = new Collection(); //defines command handler
-var helpNames = []
-var helpDescriptions = []
-var helpShortDescriptions = []
+let helpNames = []
+let helpDescriptions = []
+let helpShortDescriptions = []
+let mongoClient;
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -49,10 +50,10 @@ let status = async function (status) {
 client.on("messageCreated", async (msg) => {
     let sender = await client.members.fetch(msg.serverId, msg.createdById)
     if (bannedUsers[msg.authorId]) return
-    
-    if (!(serverSettings = await mongoWrapper.findServerSettings(mongoClient, msg.serverId)) && sender.isOwner === true) { 
+    let serverSettings = await mongoWrapper.findServerSettings(mongoClient, msg.serverId)
+    if (!serverSettings && sender.isOwner === true) { 
         await mongoWrapper.addServer(mongoClient, msg.serverId)
-        var serverSettings = await mongoWrapper.findServerSettings(mongoClient, msg.serverId)
+        serverSettings = await mongoWrapper.findServerSettings(mongoClient, msg.serverId)
         msg.reply( {isPrivate: true, embeds: [{title: "This server has been automatically opted into data collection.", description: "This server is now contributing to the auto-mod project, please review your server settings using the command `.settings`. All data is anonymous, though personally identifiable information may be collected on accident. To learn more information please run `.about`"}]})
     }
     try {
@@ -60,16 +61,17 @@ client.on("messageCreated", async (msg) => {
             if(!await mongoWrapper.getUser(mongoClient, msg.authorId)) {
                 await mongoWrapper.addUser(mongoClient, msg.authorId)
                 await msg.reply( {isPrivate: true, embeds: [{title: "You have been automatically opted into data collection.", description: "This server is contributing to the auto-mod project, if you do not wish to participate, please use the command `.opt out`. All data is anonymous, though personally identifiable information may be collected on accident. To learn more information please run `.about`"}]})
-                await collect(msg)
+                collect(msg)
             } else if ((await mongoWrapper.getUser(mongoClient, msg.authorId)).opt === true) {
                 console.log("collecting")
-                await collect(msg)
+                collect(msg)
             }
         }
         if(!msg.content.startsWith(".")) return
-        [commandName, ...args] = msg.content.slice(1).trim().split(/ +/);//slices everything into commands and arguments
+        let [commandName, ...args] = msg.content.slice(1).trim().split(/ +/);//slices everything into commands and arguments
         commandName = commandName.toLowerCase(); //lowercases command name
-        command = commands.get(commandName) ?? commands.find((x) => x.aliases?.includes(commandName)); // tries to find command
+        let command = commands.get(commandName) ?? commands.find((x) => x.aliases?.includes(commandName)); // tries to find command
+        let commandEnabledForRole;
         if (command || commandName === "help") {
         if (sender.isOwner === true) {
             commandEnabledForRole = true
@@ -90,8 +92,7 @@ client.on("messageCreated", async (msg) => {
                   .setTimestamp()
                   .setFooter("Executed by: " + sender.displayName)
               )
-            } else {
-              if (helpNames.includes(capitalizeFirstLetter(args[0]))) {
+            } else if (helpNames.includes(capitalizeFirstLetter(args[0]))) {
                 await msg.reply(
                   new Embed()
                     .setTitle("Help for: " + capitalizeFirstLetter(args[0]))
@@ -100,7 +101,7 @@ client.on("messageCreated", async (msg) => {
                     .setTimestamp()
                     .setFooter("Executed by: " + sender.displayName)
                 )
-              } else {
+            } else {
                 await msg.reply(
                   new Embed()
                       .setTitle("Your command is not found.")
@@ -109,15 +110,14 @@ client.on("messageCreated", async (msg) => {
                       .setTimestamp()
                       .setFooter("Executed by: " + sender.displayName)
                 )
-              }
             }
          
         } else {
           try {
             await command.execute(msg, args, client, sender, commandEnabledForRole);
           } catch (e) {
-              void client.messages.send(msg.channelId, "There was an error executing that command!");
-              void console.error('\x1b[31m\x1b[1m', e);
+              client.messages.send(msg.channelId, "There was an error executing that command!");
+              console.error('\x1b[31m\x1b[1m', e);
           }
         }
       }     
