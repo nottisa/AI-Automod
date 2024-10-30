@@ -1,5 +1,5 @@
 const fs = require('fs');
-var strManipulation = require('./stringManipulation');
+const strManipulation = require('./stringManipulation');
 
 exports.saveTrainingData = function (data) {
     let toExport = []
@@ -27,7 +27,6 @@ exports.saveTrainingData = function (data) {
 }
 
 exports.saveModel = function (network) {
-    const brain = require('brain.js');
     try {
         if (!fs.existsSync('./network')) {
             fs.mkdirSync('./network');
@@ -60,7 +59,7 @@ exports.formatData = function () {
     }
 
     let dataFolder = fs.readdirSync('./rawData');
-    for(fileName of dataFolder) {
+    for(let fileName of dataFolder) {
         let file = require('../rawData/' + fileName);
         let saved = this.saveTrainingData(file)
         if(saved) {
