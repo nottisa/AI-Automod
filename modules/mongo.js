@@ -1,15 +1,14 @@
 const { MongoClient } = require("mongodb");
 
 async function openConnection(uri) {
-  mongoClient = new MongoClient(uri);
+  let mongoClient = new MongoClient(uri);
   try {
     await mongoClient.connect();
     await mongoClient.db("Ears").command({ ping: 1 });
   } catch (e) {
     mongoClient.close();
-  } finally {
-    return mongoClient;
-  }
+  } 
+  return mongoClient;
 }
 
 async function findServerSettings(mongoClient, server) {
