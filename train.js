@@ -1,6 +1,6 @@
 const brain = require('brain.js');
 const network = new brain.NeuralNetwork();
-var strManipulation = require('./modules/stringManipulation');
+const strManipulation = require('./modules/stringManipulation');
 const dataSave = require('./modules/data');
 const fs = require('fs');
 const data = []
@@ -10,7 +10,7 @@ try {
     fs.mkdirSync('./formattedData');
   } else {
     let dataFolder = fs.readdirSync('./formattedData');
-    for (fileName of dataFolder) {
+    for (let fileName of dataFolder) {
       let file = require('./formattedData/' + fileName);
       for (element of file) {
         data.push({input:element["word"], output:element["var"]})
